@@ -1,4 +1,3 @@
-[README_1.md](https://github.com/user-attachments/files/28185588/README_1.md)
 # Market-Microstructure-Trilogy
 
 **Max Matthews** · Eller College of Management, University of Arizona · `maxmatt2@arizona.edu`
@@ -8,6 +7,8 @@ Three working papers on limit order book dynamics, high-frequency microstructure
 ---
 
 ## Papers
+
+> **Methodological Disclaimer:** All Sharpe ratios, Calmar ratios, and return figures reported in this repository are *gross theoretical metrics* derived from walk-forward simulated signal performance on historical order-book data. They do not constitute realized trading results and have not been adjusted for the full cost of real-world execution, including but not limited to: bid-ask spread crossing at stressed microstructure conditions, market impact under the Square Root Law, queue-position fill uncertainty, and latency-dependent adverse selection. Industry practitioners should treat all figures as upper-bound estimates of signal quality prior to a complete transaction cost analysis (TCA). No representation is made that these results are achievable in live trading.
 
 ### 1. Constrained Stochasticity in Central Limit Order Books (2025)
 `/paper_1_revised.pdf`
@@ -114,76 +115,3 @@ ETHUSDT replication: Sharpe 2.19 [1.74, 2.64]. Robustness: LUNA/FTX event window
 ---
 
 ## Repository Structure
-
-```
-Market-Microstructure-Trilogy/
-├── README.md
-├── papers/
-│   ├── paper_1_revised.pdf          # Constrained Stochasticity (2025)
-│   ├── paper2revision.pdf           # Multifractal Price Delivery (2026)
-│   └── Paper_3revision_2.pdf        # Network Geometry of Order Flow (2026)
-└── code/
-    ├── hawkes/
-    │   ├── hawkes_mle.py            # Discretized bivariate Hawkes MLE
-    │   └── branching_matrix.py      # Spectral radius computation for A
-    ├── hmm/
-    │   ├── baum_welch.py            # GPU-accelerated Baum-Welch
-    │   └── viterbi.py               # Walk-forward Viterbi decoding
-    ├── phi_matrix/
-    │   ├── phi_k.py                 # Discretized Execution Validation Matrix
-    │   └── hadamard_compose.py      # Hadamard composition pipeline
-    ├── mfdfa/
-    │   ├── mfdfa_estimator.py       # MF-DFA h(q) spectrum estimation
-    │   ├── cusum_detector.py        # Sequential change-point (Chu et al.)
-    │   └── hurst_rolling.py         # Rolling Hₜ on W=2000 tick windows
-    ├── allometric/
-    │   ├── latency_burst.py         # HDBSCAN fingerprinting pipeline
-    │   ├── iv_regression.py         # 2SLS with K-P diagnostic
-    │   └── power_analysis.py        # Minimum N calculation
-    └── data_pipeline/
-        ├── clean_l3.py              # CME Level-3 / Binance L3 ingestion
-        ├── gpu_kernels.cu           # CUDA kernels for tick processing
-        └── wfo_engine.py            # Walk-forward optimization engine
-```
-
----
-
-## Technical Stack
-
-- **Languages:** Python 3.11, CUDA C++
-- **Core libraries:** NumPy, pandas, statsmodels, scikit-learn, hdbscan, cupy, numba
-- **GPU:** NVIDIA A100 (Binance MF-DFA: ~14h full sample at 5-min scale); A10 / V100 for CME Hawkes estimation
-- **Data sources:** CME Datamine Level-3 (academic license); Binance institutional historical data program
-- **Estimation:** Maximum likelihood (Hawkes), Baum-Welch / Viterbi (HMM), MF-DFA (Kantelhardt et al. 2002), HDBSCAN (Campello et al. 2013), 2SLS/IV (Stock & Yogo 2005)
-- **Inference:** Studentized bootstrap Sharpe CIs (Ledoit & Wolf 2008, n=10,000); Bonferroni correction; sequential CUSUM (Chu, Stinchcombe & White 1996); LR tests
-
----
-
-## Citation
-
-```bibtex
-@techreport{matthews2025constrained,
-  author = {Matthews, Max},
-  title  = {Constrained Stochasticity in Central Limit Order Books},
-  institution = {Eller College of Management, University of Arizona},
-  year   = {2025}
-}
-
-@techreport{matthews2026multifractal,
-  author = {Matthews, Max},
-  title  = {Multifractal Price Delivery in Algorithmic Futures Markets},
-  institution = {Eller College of Management, University of Arizona},
-  year   = {2026}
-}
-
-@techreport{matthews2026network,
-  author = {Matthews, Max},
-  title  = {The Network Geometry of Order Flow: Explaining Sublinear Scaling in U.S. Futures Markets},
-  institution = {Eller College of Management, University of Arizona},
-  year   = {2026}
-}
-```
-
----
-
-*All empirical results are presented as numerical illustrations or pre-registered specifications. Out-of-sample performance figures are not a guarantee of future returns. CME results use walk-forward methodology designed to approximate real-time conditions; Binance results are scoped to crypto perpetual futures and do not generalize to regulated futures markets without separate replication.*
