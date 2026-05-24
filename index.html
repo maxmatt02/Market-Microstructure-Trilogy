@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Max Matthews · Quantitative Finance Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --border-bright: #2a2a3e;
+    --text: #c8c8d8;
+    --text-dim: #5a5a7a;
+    --text-bright: #e8e8f4;
+    --accent: #4a9eff;
+    --accent-dim: #1a3a6e;
+    --accent-glow: rgba(74, 158, 255, 0.12);
+    --green: #3ddc97;
+    --green-dim: #0d3322;
+    --amber: #ffb347;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(74,158,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,158,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 64px 0 48px;
+  }
+
+  .header-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tag::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+
+  .status-block {
+    text-align: right;
+  }
+
+  .status-item {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .status-item span {
+    color: var(--green);
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 0;
+  }
+
+  nav a {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 14px 20px;
+    border-right: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s;
+  }
+
+  nav a:hover {
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  nav li:first-child a { border-left: 1px solid var(--border); }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── BIO ─── */
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .bio-text p {
+    color: var(--text);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .bio-text p:last-child { margin-bottom: 0; }
+
+  .bio-text strong {
+    color: var(--text-bright);
+    font-weight: 500;
+  }
+
+  .stats-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-row:last-child { border-bottom: none; }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .stat-value {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  /* ─── PAPERS ─── */
+  .paper-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .paper-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .paper-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .paper-card:hover::before {
+    opacity: 1;
+  }
+
+  .paper-header {
+    padding: 24px 28px 20px;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .paper-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .paper-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    background: var(--accent-glow);
+    padding: 2px 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .paper-year {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .paper-venue {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .paper-title {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  .paper-subtitle {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-dim);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .paper-toggle {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--text-dim);
+    transition: color 0.2s, transform 0.2s;
+    user-select: none;
+    margin-top: 2px;
+  }
+
+  .paper-card.open .paper-toggle {
+    color: var(--accent);
+    transform: rotate(45deg);
+  }
+
+  .paper-body {
+    display: none;
+    padding: 0 28px 28px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+    padding-top: 24px;
+  }
+
+  .paper-card.open .paper-body { display: block; }
+
+  .abstract {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .metric-cell {
+    background: var(--bg);
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .metric-val {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--green);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .metric-lbl {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .key-constructs {
+    margin-bottom: 20px;
+  }
+
+  .key-constructs h4 {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .construct-list {
+    list-style: none;
+  }
+
+  .construct-list li {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .construct-list li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+
+  .construct-list li:last-child { border-bottom: none; }
+
+  .construct-list strong {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .math-block {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--amber);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--amber);
+    padding: 12px 16px;
+    margin: 8px 0;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .paper-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-secondary {
+    border-color: var(--border-bright);
+    color: var(--text-dim);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--text-dim);
+    color: var(--text);
+  }
+
+  /* ─── CODE SECTION ─── */
+  .code-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .code-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    transition: border-color 0.2s;
+  }
+
+  .code-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .code-card-path {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    margin-bottom: 8px;
+    word-break: break-all;
+  }
+
+  .code-card-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ─── TECH STACK ─── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+  }
+
+  .tech-item {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tech-item::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ─── CONTACT ─── */
+  .contact-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .contact-link {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+
+  .contact-link:hover { color: var(--accent); }
+
+  .contact-link::before {
+    content: '→';
+    color: var(--accent);
+    font-size: 10px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  footer p {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  header, nav, section {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  nav { animation-delay: 0.05s; }
+  section:nth-of-type(1) { animation-delay: 0.1s; }
+  section:nth-of-type(2) { animation-delay: 0.15s; }
+  section:nth-of-type(3) { animation-delay: 0.2s; }
+  section:nth-of-type(4) { animation-delay: 0.25s; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .header-inner { grid-template-columns: 1fr; }
+    .status-block { text-align: left; }
+    .bio-grid { grid-template-columns: 1fr; }
+    nav ul { flex-wrap: wrap; }
+  }
+
+  /* Scanline effect on hover for paper cards */
+  .paper-card:hover .paper-title {
+    color: #fff;
+  }
+
+  /* Blinking cursor */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-left: 4px;
+    animation: blink 1.1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ─── HEADER ─── -->
+  <header>
+    <div class="header-inner">
+      <div>
+        <div class="tag">Working papers · Market microstructure</div>
+        <h1>Max Matthews<span class="cursor"></span></h1>
+        <p class="subtitle">Eller College of Management · University of Arizona · B.S. Finance, 2026</p>
+      </div>
+      <div class="status-block">
+        <div class="status-item">Status: <span>Job Seeking</span></div>
+        <div class="status-item">Focus: <span>HFT / Quant Research</span></div>
+        <div class="status-item">Data: <span>12.4B tick events</span></div>
+        <div class="status-item">GPU: <span>NVIDIA A100</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── NAV ─── -->
+  <nav>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#code">Code</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── ABOUT ─── -->
+  <section id="about">
+    <div class="section-label">01 · About</div>
+    <div class="bio-grid">
+      <div class="bio-text">
+        <p>
+          I research the mathematical structure of electronic order books. My work spans three intersecting problems:
+          <strong>how algorithmic liquidity architecture bounds high-frequency stochasticity</strong>,
+          <strong>how institutional price delivery is self-similar across timescales</strong>, and
+          <strong>how participant order activity scales with capital footprint</strong> — the same exponent as biological metabolism.
+        </p>
+        <p>
+          All three papers are built on high-frequency futures data processed at the
+          <strong>nanosecond event level</strong>. The Constrained Stochasticity paper covers
+          8.3 billion CME Globex Level-3 events (ES + NQ, 2022–2024).
+          The Multifractal Delivery paper covers 4.18 billion Binance BTCUSDT perpetual futures events.
+          The Allometric Scaling paper specifies a complete empirical protocol for live CME Level-2 data,
+          pre-registered with falsifiable criteria.
+        </p>
+        <p>
+          I wrote GPU-accelerated Python for all estimation pipelines:
+          discretized bivariate Hawkes MLE, Baum-Welch / Viterbi for three-state HMMs,
+          MF-DFA generalized Hurst spectrum, and HDBSCAN latency-burst fingerprinting.
+        </p>
+      </div>
+      <div class="stats-panel">
+        <div class="stat-row">
+          <span class="stat-label">Tick events</span>
+          <span class="stat-value">12.4B</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Papers</span>
+          <span class="stat-value">3</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Sharpe (R1)</span>
+          <span class="stat-value">2.85</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Sharpe (FLPD)</span>
+          <span class="stat-value">2.41</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">OOS period</span>
+          <span class="stat-value">24 mo.</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Scaling α</span>
+          <span class="stat-value">3/4</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Grad. date</span>
+          <span class="stat-value">May 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── RESEARCH ─── -->
+  <section id="research">
+    <div class="section-label">02 · Research</div>
+
+    <!-- Paper 1 -->
+    <div class="paper-card" id="p1">
+      <div class="paper-header" onclick="togglePaper('p1')">
+        <div>
+          <div class="paper-meta">
+            <span class="paper-num">Paper 01</span>
+            <span class="paper-year">2025</span>
+            <span class="paper-venue">· CME ES/NQ Level-3</span>
+          </div>
+          <div class="paper-title">Constrained Stochasticity in Central Limit Order Books</div>
+          <div class="paper-subtitle">Regime-Switching Microstructure, Discretized Execution Matrices, and Absorbing Boundary Conditions in High-Frequency Futures Markets</div>
+        </div>
+        <div class="paper-toggle">+</div>
+      </div>
+      <div class="paper-body">
+        <p class="abstract">
+          Develops a rigorous mathematical framework for modeling CLOB dynamics under the hypothesis of Constrained Stochasticity — the proposition that high-frequency price formation is simultaneously stochastic at the nanosecond level and structurally bounded by algorithmic liquidity architecture at meso- and macro-timescales. Introduces the Discretized Execution Validation Matrix (Φₖ), embeds it within a three-state HMM, and derives closed-form absorbing boundary conditions for leveraged wealth processes. Self-exciting order-flow dynamics modeled via a discretized bivariate Hawkes process. Empirical validation on 8.3B Level-3 events from CME ES and NQ (2022–2024).
+        </p>
+        <div class="metrics-grid">
+          <div class="metric-cell">
+            <span class="metric-val">2.85</span>
+            <span class="metric-lbl">Sharpe R1</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">1.42</span>
+            <span class="metric-lbl">Sharpe R2</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">8.4%</span>
+            <span class="metric-lbl">Max DD R1</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">8.3B</span>
+            <span class="metric-lbl">Tick events</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">&lt;0.001</span>
+            <span class="metric-lbl">vs GBM null</span>
+          </div>
+        </div>
+        <div class="key-constructs">
+          <h4>Key Constructs</h4>
+          <ul class="construct-list">
+            <li>
+              <strong>Φₖ (Discretized Execution Validation Matrix)</strong> — tick-level operator aggregating localized liquidity tensors, directional execution vectors, and volumetric mass via Hadamard composition:
+              <div class="math-block">Φₖ = Σᵢ (Lᵢₖ · Vₖᵀ) ⊙ Mₖ</div>
+            </li>
+            <li><strong>Three-state HMM:</strong> Regime 1 (68.2%), Regime 2 (24.1%), Regime 3 (7.7%). Baum-Welch estimation; walk-forward Viterbi decoding.</li>
+            <li><strong>Absorbing boundary (Regime 3):</strong> Kesten-Goldie theorem: under ρ(A) ≥ 1, E[T₀] = O(log W₀) for any φ &gt; 0. Optimal policy: φ* = 0.</li>
+            <li><strong>Common-β Hawkes:</strong> LR test χ²(3) = 4.71, p = 0.194 — parsimony restriction retained.</li>
+          </ul>
+        </div>
+        <div class="paper-links">
+          <a href="paper_1_revised.pdf" class="btn btn-primary" download>↓ Download PDF</a>
+          <a href="https://github.com/yourusername/Market-Microstructure-Trilogy" class="btn btn-secondary">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 2 -->
+    <div class="paper-card" id="p2">
+      <div class="paper-header" onclick="togglePaper('p2')">
+        <div>
+          <div class="paper-meta">
+            <span class="paper-num">Paper 02</span>
+            <span class="paper-year">2026</span>
+            <span class="paper-venue">· Binance BTCUSDT Perpetual</span>
+          </div>
+          <div class="paper-title">Multifractal Price Delivery in Algorithmic Futures Markets</div>
+          <div class="paper-subtitle">Nested Accumulation–Distribution Cycles, Dynamic Hurst Exponents, and Hierarchical Delivery Matrices in Scale-Invariant Order Book Microstructure</div>
+        </div>
+        <div class="paper-toggle">+</div>
+      </div>
+      <div class="paper-body">
+        <p class="abstract">
+          Formalizes the Fractal Law of Price Delivery (FLPD) — the proposition that institutional order-book liquidity engineering operates as a nested, scale-invariant hierarchy of Accumulation-Distribution cycles across multiple temporal horizons. Three complementary formalizations: (1) scale invariance via Hurst exponent H in a Multifractal Random Walk framework, showing AD cycles across intraday-to-weekly horizons share statistically indistinguishable Hurst signatures (H ≈ 0.62–0.71); (2) the Discretized Multiscale Hierarchical Delivery Matrix (Ψ); (3) the Terminal Macro-Attractor (Ωₜ) as a detectable Hurst-collapse phase boundary. Estimated on 4.18B nanosecond-stamped Level-3 events, 36 months.
+        </p>
+        <div class="metrics-grid">
+          <div class="metric-cell">
+            <span class="metric-val">2.41</span>
+            <span class="metric-lbl">OOS Sharpe</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">63.4%</span>
+            <span class="metric-lbl">Ann. Return</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">11.8%</span>
+            <span class="metric-lbl">Max DD</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">0.67</span>
+            <span class="metric-lbl">Hurst H</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">847</span>
+            <span class="metric-lbl">Ωₜ Events</span>
+          </div>
+        </div>
+        <div class="key-constructs">
+          <h4>Key Constructs</h4>
+          <ul class="construct-list">
+            <li><strong>Temporal Liquidity Vacuum (TLV):</strong> Power-law duration distribution P(s &gt; x) ~ x^{−α}, α = 1/(H − 0.5). KS-test rejects GBM null at all five aggregation scales (p &lt; 0.0023).</li>
+            <li>
+              <strong>Ψ (Hierarchical Delivery Matrix):</strong>
+              <div class="math-block">Ψₛₜ = Σⱼ∈[t−δ,t] (Mₛ₊₁,ⱼ · e^{−λ(t−j)}) ⊙ νⱼ</div>
+            </li>
+            <li><strong>Terminal Macro-Attractor Ωₜ:</strong> Mean Hₜ drop at event boundary: −0.094 (t = 11.75, p &lt; 0.001). Placebo: −0.003 (t = 0.41). Median lead to reversal: 22.4 ticks (~4.7s).</li>
+            <li><strong>Hurst equivalence:</strong> MF-DFA permutation test across 5 scales — χ²(8) = 9.14, p = 0.33. Scale-invariance not rejected.</li>
+          </ul>
+        </div>
+        <div class="paper-links">
+          <a href="paper2revision.pdf" class="btn btn-primary" download>↓ Download PDF</a>
+          <a href="https://github.com/yourusername/Market-Microstructure-Trilogy" class="btn btn-secondary">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 3 -->
+    <div class="paper-card" id="p3">
+      <div class="paper-header" onclick="togglePaper('p3')">
+        <div>
+          <div class="paper-meta">
+            <span class="paper-num">Paper 03</span>
+            <span class="paper-year">2026</span>
+            <span class="paper-venue">· CME ES/NQ Level-2 · Pre-registered</span>
+          </div>
+          <div class="paper-title">The Network Geometry of Order Flow</div>
+          <div class="paper-subtitle">Explaining Sublinear Scaling in U.S. Futures Markets via Allometric Theory and Hierarchical Order-Routing Networks</div>
+        </div>
+        <div class="paper-toggle">+</div>
+      </div>
+      <div class="paper-body">
+        <p class="abstract">
+          Derives α = 3/4 analytically from optimal branching conditions in a hierarchical order-routing network — the same exponent as West-Brown-Enquist biological metabolic scaling — and develops a complete pre-registered empirical protocol for live CME Datamine Level-2 data. Four closed steps: (i) fₖ ∝ Qₖ^{−1/4} from Almgren-Chriss adverse-selection balance; (ii) 2/3 capacity exponent from Square Root Law slippage minimization; (iii) explicit computation of geometric-sum correction C(n,N) showing it contributes M^{1/12}; (iv) martingale robustness to heterogeneous, time-varying branching. Reconciles allometric scaling with the Square Root Law of market impact.
+        </p>
+        <div class="metrics-grid">
+          <div class="metric-cell">
+            <span class="metric-val">3/4</span>
+            <span class="metric-lbl">Scaling α</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">N≥280</span>
+            <span class="metric-lbl">Min clusters</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">8</span>
+            <span class="metric-lbl">Tranches</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">9</span>
+            <span class="metric-lbl">Pre-reg specs</span>
+          </div>
+          <div class="metric-cell">
+            <span class="metric-val">2SLS</span>
+            <span class="metric-lbl">IV strategy</span>
+          </div>
+        </div>
+        <div class="key-constructs">
+          <h4>Key Constructs</h4>
+          <ul class="construct-list">
+            <li><strong>Proof of α = 3/4:</strong> Four algebraically closed steps. C(n,N) = n^{11/8}/(n^{11/8}−1) converges at exponential rate in N (&lt;10⁻⁴ for n≥2, N≥10). Effective Terminal Density correction contributes precisely M^{1/12} to close 2/3 → 3/4 gap.</li>
+            <li><strong>Economic corollary:</strong> 10× capital footprint → 5.6× message traffic (Y/M ∝ M^{−1/4}). Participant lifespan T ∝ M^{1/4}.</li>
+            <li><strong>Latency-burst fingerprinting:</strong> HDBSCAN on 100µs burst feature vectors (latency, size moments, side imbalance, price clustering, time-of-day). Cosine-similarity filter &gt;0.85.</li>
+            <li><strong>IV identification:</strong> Instrument Zᵢ = ln(σQ,i/μQ,i). Required: first-stage F &gt; 10, Kleibergen-Paap rk Wald diagnostic, over-ID test if second instrument available.</li>
+          </ul>
+        </div>
+        <div class="paper-links">
+          <a href="Paper_3revision_2.pdf" class="btn btn-primary" download>↓ Download PDF</a>
+          <a href="https://github.com/yourusername/Market-Microstructure-Trilogy" class="btn btn-secondary">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ─── CODE ─── -->
+  <section id="code">
+    <div class="section-label">03 · Code (GitHub)</div>
+    <p style="font-size:13px;font-weight:300;color:var(--text-dim);margin-bottom:24px;">
+      GPU-accelerated Python pipelines. Data cleaning, estimation, and walk-forward infrastructure.
+      Proprietary signal logic is not published; all statistical infrastructure is open.
+    </p>
+    <div class="code-grid">
+      <div class="code-card">
+        <div class="code-card-path">hawkes/hawkes_mle.py</div>
+        <div class="code-card-desc">Discretized bivariate Hawkes MLE. GPU-parallel conditional intensity estimation. Common-β LR test.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">hmm/baum_welch.py</div>
+        <div class="code-card-desc">Three-state HMM estimation via Baum-Welch. Walk-forward Viterbi decoding. Regime persistence diagnostics.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">phi_matrix/phi_k.py</div>
+        <div class="code-card-desc">Discretized Execution Validation Matrix construction. Hadamard composition pipeline. PSD verification via Schur product theorem.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">mfdfa/mfdfa_estimator.py</div>
+        <div class="code-card-desc">MF-DFA generalized Hurst spectrum h(q). Stationary bootstrap SEs (Politis & Romano 1994). Rolling Hₜ on W=2000 tick windows.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">mfdfa/cusum_detector.py</div>
+        <div class="code-card-desc">Sequential change-point detection on Hₜ sequence (Chu, Stinchcombe & White 1996). Ωₜ identification and placebo validation.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">allometric/latency_burst.py</div>
+        <div class="code-card-desc">HDBSCAN latency-burst fingerprinting. 100µs threshold. Cosine-similarity centroid stability filter. τ sensitivity sweep.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">allometric/iv_regression.py</div>
+        <div class="code-card-desc">2SLS with order-size dispersion instrument. HC3-robust SEs. Kleibergen-Paap rk Wald statistic. First-stage F diagnostics.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">data_pipeline/gpu_kernels.cu</div>
+        <div class="code-card-desc">CUDA C++ kernels for nanosecond-resolution tick processing. Used for 12.4B event datasets on A100. Binance + CME Globex format parsers.</div>
+      </div>
+      <div class="code-card">
+        <div class="code-card-path">data_pipeline/wfo_engine.py</div>
+        <div class="code-card-desc">Walk-forward optimization engine. 12-month min training window, 1-month OOS, quarterly roll. No-look-ahead-bias verified via parameter roll table.</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <a href="https://github.com/yourusername/Market-Microstructure-Trilogy" class="btn btn-primary">View on GitHub</a>
+    </div>
+  </section>
+
+  <!-- ─── STACK ─── -->
+  <section id="stack">
+    <div class="section-label">04 · Technical Stack</div>
+    <div class="tech-grid">
+      <div class="tech-item">Python 3.11</div>
+      <div class="tech-item">CUDA C++</div>
+      <div class="tech-item">NumPy / CuPy</div>
+      <div class="tech-item">Numba (JIT)</div>
+      <div class="tech-item">pandas</div>
+      <div class="tech-item">statsmodels</div>
+      <div class="tech-item">scikit-learn</div>
+      <div class="tech-item">HDBSCAN</div>
+      <div class="tech-item">NVIDIA A100</div>
+      <div class="tech-item">CME Datamine L3</div>
+      <div class="tech-item">Binance Inst. L3</div>
+      <div class="tech-item">Maximum Likelihood</div>
+      <div class="tech-item">Baum-Welch / Viterbi</div>
+      <div class="tech-item">MF-DFA</div>
+      <div class="tech-item">2SLS / IV</div>
+      <div class="tech-item">Bootstrap (Ledoit-Wolf)</div>
+      <div class="tech-item">Bonferroni correction</div>
+      <div class="tech-item">Walk-Forward OOS</div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ─── -->
+  <section id="contact">
+    <div class="section-label">05 · Contact</div>
+    <p style="font-size:13px;font-weight:300;color:var(--text-dim);margin-bottom:20px;">
+      Available for quant research roles, HFT, and systematic trading positions. Graduating May 2026.
+    </p>
+    <div class="contact-row">
+      <a href="mailto:maxmatt2@arizona.edu" class="contact-link">maxmatt2@arizona.edu</a>
+      <a href="https://github.com/yourusername/Market-Microstructure-Trilogy" class="contact-link">GitHub</a>
+      <a href="https://linkedin.com/in/maxmatthews" class="contact-link">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <p>Max Matthews · Eller College of Management · University of Arizona · 2026</p>
+    <p style="color:var(--text-dim);font-size:9px;max-width:400px;text-align:right;">
+      All empirical results are numerical illustrations. Out-of-sample performance is not a guarantee of future returns. CME results use walk-forward methodology; Binance results are scoped to crypto perpetual futures.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  function togglePaper(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
